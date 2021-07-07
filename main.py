@@ -27,19 +27,31 @@ print("Sources successfully inserted!")
 # check if the sources are available
 print("Check if Website is available...")
 for x in range(len(sources)):
-    request = requests.get(sources[x-1])
-    if request.status_code == 200:
-        print("Website exists: " + sources[x-1].replace("\n", ""))
-        available_sources.append(sources[x-1])
-    else:
-        print("Website does not exist: " + sources[x-1].replace("\n", ""))
-        unavailable_sources.append(sources[x-1])
+    try:
+        request = requests.get(sources[x-1])
+        if request.status_code == 200:
+            print("Website exists: " + sources[x-1].replace("\n", ""))
+            available_sources.append(sources[x-1])
+        else:
+            print("ERROR")
+    except:
+        print("Website does not exist: " + sources[x - 1].replace("\n", ""))
+        unavailable_sources.append(sources[x - 1])
 
 print("Check completed!")
 
 # Writing Sourcefile
+print("Writing final source data...")
 final_data.write("Sources are checked and available: " + "\n")
 for x in range(len(available_sources)):
     now = datetime.now()
     current_datetime = now.strftime("%m/%d/%Y, %H:%M:%S")
     final_data.write(available_sources[x-1].replace("\n", "") + "; [" + current_datetime + " Uhr]" + "\n")
+
+final_data.write("\n")
+
+for x in range(len(unavailable_sources)):
+    final_data.write("Sources are unavailable: " + "\n")
+    final_data.write(unavailable_sources[x-1].replace("\n", "") + "\n")
+
+print("Writing completed!")
