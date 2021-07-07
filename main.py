@@ -11,14 +11,9 @@ import webbrowser
 import requests
 
 # Create Lists
-sources = []
+sources = [x.strip() for x in data.readlines()]
 available_sources = []
 unavailable_sources = []
-
-
-# Read Lines and save them in a List
-for line in data:
-    sources.append(line)
 
 # Output List
 print(sources)
@@ -26,32 +21,31 @@ print("Sources successfully inserted!")
 
 # check if the sources are available
 print("Check if Website is available...")
-for x in range(len(sources)):
+for src in sources:
     try:
-        request = requests.get(sources[x-1])
-        if request.status_code == 200:
-            print("Website exists: " + sources[x-1].replace("\n", ""))
-            available_sources.append(sources[x-1])
+        res = requests.get(src)
+        if res.status_code == 200:
+            print("Website exists:", src)
+            available_sources.append(src)
         else:
             print("ERROR")
-    except:
-        print("Website does not exist: " + sources[x - 1].replace("\n", ""))
-        unavailable_sources.append(sources[x - 1])
+    except Exception:
+        print("Website does not exist:", src)
+        unavailable_sources.append(src)
 
 print("Check completed!")
 
 # Writing Sourcefile
 print("Writing final source data...")
-final_data.write("Sources are checked and available: " + "\n")
-for x in range(len(available_sources)):
-    now = datetime.now()
-    current_datetime = now.strftime("%m/%d/%Y, %H:%M:%S")
-    final_data.write(available_sources[x-1].replace("\n", "") + "; [" + current_datetime + " Uhr]" + "\n")
+final_data.write("Sources are checked and available:\n")
+for available in available_sources:
+    dt = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+    final_data.write(f"{available}; [{dt} Uhr]\n")
 
 final_data.write("\n")
 
-for x in range(len(unavailable_sources)):
-    final_data.write("Sources are unavailable: " + "\n")
-    final_data.write(unavailable_sources[x-1].replace("\n", "") + "\n")
+for unavailable in unavailable_sources:
+    final_data.write("Sources are unavailable:\n")
+    final_data.write(f"{unavailable}\n")
 
 print("Writing completed!")
